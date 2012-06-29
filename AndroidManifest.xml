@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.herring.pmds"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="14" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    
+  
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".PMDSActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".manual.MDeviceScheduleActivity"
+            android:label="@string/manual_device_schedule_title" >
+        </activity>
+        <activity
+            android:name=".manual.MDateScheduleActivity"
+            android:label="@string/manual_date_schedule_title" >
+        </activity>
+        <activity
+            android:name=".auto.ADeviceScheduleActivity"
+            android:label="@string/manual_device_schedule_title" >
+        </activity>
+        <activity
+            android:name=".auto.ADateScheduleActivity"
+            android:label="@string/manual_date_schedule_title" >
+        </activity>
+        <activity
+            android:name=".manual.NewScheduleItemActivity"
+             >
+        </activity>
+        <activity
+            android:name=".manual.NewWifiActivity">
+        </activity>
+        <activity
+            android:name=".manual.NewCPUActivity">
+        </activity>
+        <activity
+            android:name=".manual.NewAutorotateActivity">
+        </activity>
+        <activity
+            android:name=".manual.NewScreenActivity">
+        </activity>
+        <activity
+            android:name=".manual.NewBluetoothActivity">
+        </activity>
+        <receiver android:name=".PMDSAlarmReceiver">
+            <intent-filter>
+               	<data android:scheme="pmdsalarm:" />
+               	<action android:name="android.intent.action.VIEW" />
+        		<category android:name="android.intent.category.DEFAULT" /> 
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".BootBroadcastReceiver">
+            <intent-filter>
+               	<action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>        
+        <activity
+            android:name=".devices.DummyActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <receiver android:name=".learning.LearnerReceiver">
+            <intent-filter>
+                <action android:name="com.herring.pmds.LEARNER_ACTION" />
+            </intent-filter>
+        </receiver> 
+    </application>
+
+</manifest>

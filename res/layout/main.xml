@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+<RadioGroup
+    android:id="@+id/mainRadioGroup"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <RadioButton
+        android:id="@+id/manualRBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/manual_sched"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <Button
+        android:id="@+id/manualDateBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/by_date" />
+
+    <Button
+        android:id="@+id/manualDeviceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/by_device" />
+
+
+<Button
+    android:id="@+id/newSchedBtn"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/new_schedule_item" />
+
+<RadioButton
+    android:id="@+id/autoRBtn"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/auto_sched"
+    android:textAppearance="?android:attr/textAppearanceLarge" />
+</RadioGroup>
+    <Button
+        android:id="@+id/autoDateBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/by_date" />
+
+    <Button
+        android:id="@+id/autoDeviceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/by_device" />
+
+    <CheckBox
+        android:id="@+id/learningBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/learning_mode" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dev options"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/wipeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wipe DB" />
+
+</LinearLayout>
