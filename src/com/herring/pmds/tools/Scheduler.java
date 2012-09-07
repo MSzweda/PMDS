@@ -19,9 +19,9 @@ import com.herring.pmds.manual.ManualSchedulesDBManager;
 
 public class Scheduler 
 {
-	ManualSchedulesDBManager Mdb;
-	AutoSchedulesDBManager Adb;
-	Context ctx;
+	private ManualSchedulesDBManager Mdb;
+	private AutoSchedulesDBManager Adb;
+	private Context ctx;
 	
 	public Scheduler(Context ctx)
 	{
@@ -51,7 +51,7 @@ public class Scheduler
         	//read each row until you move after the last row
         	while(!schedules.isAfterLast())
         	{
-        		String uri = constructURI(schedules.getInt(idColumn),schedules.getInt(deviceColumn),schedules.getInt(actionColumn));
+        		String uri = constructURI(schedules.getInt(idColumn),schedules.getInt(deviceColumn),schedules.getInt(actionColumn), Constants.MANUAL_MODE);
         		constructAlarmManager(uri,schedules.getInt(weekdayColumn),schedules.getInt(hourColumn),schedules.getInt(minuteColumn));
         		schedules.moveToNext();
         	}
@@ -82,7 +82,7 @@ public class Scheduler
         	//read each row until you move after the last row
         	while(!schedules.isAfterLast())
         	{
-        		String uri = constructURI(schedules.getInt(idColumn),schedules.getInt(deviceColumn),schedules.getInt(actionColumn));
+        		String uri = constructURI(schedules.getInt(idColumn),schedules.getInt(deviceColumn),schedules.getInt(actionColumn), Constants.AUTO_MODE);
         		constructAlarmManager(uri,schedules.getInt(weekdayColumn),schedules.getInt(hourColumn),schedules.getInt(minuteColumn));
         		schedules.moveToNext();
         	}
@@ -98,9 +98,18 @@ public class Scheduler
 	 * device - type of device, 2 is CPI
 	 * action - type of action, 1 is set to powersave
 	 */
-	private String constructURI(int schedID, int device, int action)
+	private String constructURI(int schedID, int device, int action, int mode)
 	{
-		String base = "pmdsalarm:";
+		String base = "";
+		if(mode == Constants.AUTO_MODE)
+		{
+			base = "pmdsautoalarm:";
+		}
+		else if(mode == Constants.MANUAL_MODE)
+		{
+			base = "pmdsmanualalarm:";
+		}
+		//String base = "pmdsalarm:";
 		String idSTR = "sid/"+schedID+"/";
 		String deviceSTR = "device/"+device+"/";
 		String actionSTR = "action/"+action+"/";
@@ -119,15 +128,39 @@ public class Scheduler
 		cal.setTimeInMillis(System.currentTimeMillis());
 		
 		int today = cal.get(Calendar.DAY_OF_WEEK);
+		int curr_hour = cal.get(Calendar.HOUR_OF_DAY);
+		int curr_minute = cal.get(Calendar.MINUTE);
 		
 		int dayOffset = -1;
-    	if(weekday>=today)
+    	if(weekday>today)
     	{
     		dayOffset = weekday - today;
     	}
-    	if(weekday<today)
+    	else if(weekday<today)
     	{
     		dayOffset = 7 + weekday - today;
+    	}
+    	else if(weekday==today)
+    	{
+    		if(curr_hour < hour)
+    		{
+    			dayOffset = weekday - today;
+    		}
+    		else if(curr_hour > hour)
+    		{
+    			dayOffset = 7 + weekday - today;
+    		}
+    		else if(curr_hour == hour)
+    		{
+    			if(curr_minute > minute)
+    			{
+    				dayOffset = 7 + weekday - today;
+    			}
+    			else if(curr_minute <= minute)
+    			{
+    				dayOffset = weekday - today;
+    			}
+    		}
     	}
     	cal.add(Calendar.DATE, dayOffset);
     	cal.set(Calendar.HOUR_OF_DAY, hour);  //24 hour format
@@ -149,7 +182,7 @@ public class Scheduler
 		
 		//direct to receiver
 		Intent intent = new Intent(ctx, PMDSAlarmReceiver.class);
-		//set uri as data, so it can be filtered by the "pmdsalarm:" schema
+		//set uri as data, so it can be filtered by the "pmds*alarm:" schema
 		intent.setData(Uri.parse(uri));
 		
 		//get the object with correct time
@@ -170,9 +203,16 @@ public class Scheduler
 	/*
 	 * schedule new item
 	 */
-	public void scheduleNewItem(long id, int device, int action, int weekday, int hour, int minute)
+	public void scheduleNewItem(int mode, long id, int device, int action, int weekday, int hour, int minute)
 	{
-		String uri = constructURI((int)id,device,action);
+		String uri = constructURI((int)id,device,action, mode);
 		constructAlarmManager(uri,weekday,hour,minute);
+	}
+	
+	public void cancelAllPendingAlarms()
+	{
+		Intent intent = new Intent(ctx, PMDSAlarmReceiver.class);
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0, intent, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		pendingIntent.cancel();
 	}
 }

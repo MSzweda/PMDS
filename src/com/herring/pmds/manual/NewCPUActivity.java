@@ -18,8 +18,8 @@ import com.herring.pmds.tools.Scheduler;
 
 public class NewCPUActivity extends Activity
 {
-	Context ctx;
-	ManualSchedulesDBManager db;
+	private Context ctx;
+	private ManualSchedulesDBManager db;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) 
@@ -32,6 +32,14 @@ public class NewCPUActivity extends Activity
 	        
 	        final TimePicker tp = (TimePicker)findViewById(R.id.cpuTP);
 	        tp.setIs24HourView(true);
+	        
+	        Calendar cal=Calendar.getInstance();
+
+	        int hour=cal.get(Calendar.HOUR_OF_DAY);
+	        int min=cal.get(Calendar.MINUTE);
+	        
+	        tp.setCurrentHour(hour);
+	        tp.setCurrentMinute(min);
 	        
 	        Button saveCpuBtn = (Button)findViewById(R.id.saveCpuBtn);
 	        saveCpuBtn.setOnClickListener(new OnClickListener() 
@@ -51,8 +59,15 @@ public class NewCPUActivity extends Activity
 	 {
 		 CheckBox cpuActiveCB = (CheckBox)findViewById(R.id.cpuActiveCB);
 		  
-		 boolean isActive = cpuActiveCB.isChecked();
-		  
+		 int isActive = -1;
+		 if(cpuActiveCB.isChecked())
+		 {
+			 isActive = Constants.ACTIVE_SCHEDULE_MODE;
+		 }
+		 else
+		 {
+			 isActive = Constants.INACTIVE_SCHEDULE_MODE;
+		 }
 		 
 		  int action = Constants.ONDEMAND_MODE;
 		  
@@ -93,7 +108,7 @@ public class NewCPUActivity extends Activity
 			  if(days[i]==true)
 			  {
 				  long id = db.addScheduleItem(Constants.CPU_DEVICE, action, i, hour, minute, null, isActive);
-				  if(isActive) scheduler.scheduleNewItem(id, Constants.CPU_DEVICE, action, i, hour, minute);
+				  if(isActive==1) scheduler.scheduleNewItem(Constants.MANUAL_MODE, id, Constants.CPU_DEVICE, action, i, hour, minute);
 			  }
 		  }
 	 }

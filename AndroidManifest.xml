@@ -47,8 +47,7 @@
             android:label="@string/manual_date_schedule_title" >
         </activity>
         <activity
-            android:name=".manual.NewScheduleItemActivity"
-             >
+            android:name=".manual.NewScheduleItemActivity">
         </activity>
         <activity
             android:name=".manual.NewWifiActivity">
@@ -67,7 +66,8 @@
         </activity>
         <receiver android:name=".PMDSAlarmReceiver">
             <intent-filter>
-               	<data android:scheme="pmdsalarm:" />
+               	<data android:scheme="pmdsautoalarm:" />
+               	<data android:scheme="pmdsmanualalarm:" />
                	<action android:name="android.intent.action.VIEW" />
         		<category android:name="android.intent.category.DEFAULT" /> 
             </intent-filter>

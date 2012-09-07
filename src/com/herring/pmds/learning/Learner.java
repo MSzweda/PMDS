@@ -7,12 +7,13 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 public class Learner 
 {
-	Context ctx;
+	private Context ctx;
 	private static final String LEARNER_ACTION = "com.herring.pmds.LEARNER_ACTION";
-	AlarmManager alarmManager;
+	private AlarmManager alarmManager;
 	
 	public Learner(Context ctx)
 	{
@@ -25,7 +26,7 @@ public class Learner
 	 */
 	public void startLearner()
 	{
-		
+		Log.i("PMDS Learner", "Learner activated");
 		//set the action intent
 		Intent intent = new Intent(LEARNER_ACTION);
 		
@@ -48,6 +49,7 @@ public class Learner
 	 */
 	public void stopLearner()
 	{
+		Log.i("PMDS Learner", "Learner deactivated");
 		Intent intent = new Intent(LEARNER_ACTION);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 		alarmManager.cancel(pendingIntent);

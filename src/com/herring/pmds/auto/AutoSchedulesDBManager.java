@@ -30,7 +30,7 @@ public class AutoSchedulesDBManager
 
 
 	//private Context context;
-    SchedulesDatabaseHelper helper;
+    private SchedulesDatabaseHelper helper;
     
     //public access to database from other classes
     public AutoSchedulesDBManager(Context context)
@@ -88,7 +88,7 @@ public class AutoSchedulesDBManager
 
     
     //add an item to the database
-    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, String timestring, boolean isActive)
+    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, int isActive)
     {
     	long id = -1;
     	ContentValues values = new ContentValues();
@@ -132,7 +132,7 @@ public class AutoSchedulesDBManager
     
     
     //change the activity state of an item
-    public int changeActiveState(int itemID, boolean state)
+    public int changeActiveState(int itemID, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for schedule id: "+itemID);
     	ContentValues values = new ContentValues();
@@ -141,7 +141,7 @@ public class AutoSchedulesDBManager
     }
     
     //change activity state of all items for given device
-    public int changeActiveStateForDeviceSchedules(int deviceType, boolean state)
+    public int changeActiveStateForDeviceSchedules(int deviceType, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for device type: "+deviceType);
     	ContentValues values = new ContentValues();
@@ -150,7 +150,7 @@ public class AutoSchedulesDBManager
     }
     
     //change activity state of all items for given day of the week
-    public int changeActiveStateForDateSchedules(int weekday, boolean state)
+    public int changeActiveStateForDateSchedules(int weekday, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for day: "+weekday);
     	ContentValues values = new ContentValues();
@@ -203,7 +203,7 @@ public class AutoSchedulesDBManager
     public Cursor getAllActiveSchedules()
     {
     	Cursor cursor = db.query(true, SCHEDULES_TABLE, null,
-    			IS_ACTIVE + "=" +true, null, null, null, null, null);
+    			IS_ACTIVE + "= 1" , null, null, null, null, null);
     	if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -240,7 +240,7 @@ public class AutoSchedulesDBManager
     
     public int wipeDB()
     {
-    	Log.i("PMDSManualDBManager", "Database wiped");
+    	Log.i("PMDSAutoDBManager", "Database wiped");
     	return db.delete(SCHEDULES_TABLE, null, null);
     }
     

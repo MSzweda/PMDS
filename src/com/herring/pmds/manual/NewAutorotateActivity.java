@@ -22,8 +22,8 @@ import android.widget.TimePicker;
  */
 public class NewAutorotateActivity extends Activity
 {
-	Context ctx;
-	ManualSchedulesDBManager db;
+	private Context ctx;
+	private ManualSchedulesDBManager db;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) 
@@ -36,6 +36,15 @@ public class NewAutorotateActivity extends Activity
 	        
 	        final TimePicker tp = (TimePicker)findViewById(R.id.rotTP);
 	        tp.setIs24HourView(true);
+	        
+	        Calendar cal=Calendar.getInstance();
+
+	        int hour=cal.get(Calendar.HOUR_OF_DAY);
+	        int min=cal.get(Calendar.MINUTE);
+	        
+	        tp.setCurrentHour(hour);
+	        tp.setCurrentMinute(min);
+	        
 	        
 	        Button saveRotBtn = (Button)findViewById(R.id.saveRotBtn);
 	        saveRotBtn.setOnClickListener(new OnClickListener() 
@@ -54,8 +63,18 @@ public class NewAutorotateActivity extends Activity
 	 private void saveToDB(TimePicker tp)
 	 {
 		 CheckBox rotActiveCB = (CheckBox)findViewById(R.id.rotActiveCB);
-		  
-		 boolean isActive = rotActiveCB.isChecked();
+		  int isActive = -1;
+		 if(rotActiveCB.isChecked())
+		 {
+			 isActive = Constants.ACTIVE_SCHEDULE_MODE;
+		 }
+		 else
+		 {
+			 isActive = Constants.INACTIVE_SCHEDULE_MODE;
+		 }
+		 
+		 //boolean isActive = rotActiveCB.isChecked();
+		 
 		  RadioButton rotOnRB = (RadioButton)findViewById(R.id.rotOnRB);
 		 
 		  int action = Constants.TURN_OFF_ACTION;
@@ -95,7 +114,7 @@ public class NewAutorotateActivity extends Activity
 			  if(days[i]==true)
 			  {
 				  long id = db.addScheduleItem(Constants.AUTOROTATION, action, i, hour, minute, null, isActive);
-				  if(isActive) scheduler.scheduleNewItem(id, Constants.AUTOROTATION, action, i, hour, minute);
+				  if(isActive==1) scheduler.scheduleNewItem(Constants.MANUAL_MODE, id, Constants.AUTOROTATION, action, i, hour, minute);
 			  }
 		  }
 	 }

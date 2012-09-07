@@ -1,5 +1,7 @@
 package com.herring.pmds;
 
+import com.herring.pmds.auto.Analyzer;
+import com.herring.pmds.learning.Learner;
 import com.herring.pmds.tools.Constants;
 import com.herring.pmds.tools.Scheduler;
 
@@ -25,7 +27,15 @@ public class BootBroadcastReceiver extends BroadcastReceiver
 		}
 		else
 		{			
+			Analyzer analyzer = new Analyzer(context);
+			analyzer.performCleanup();
+			analyzer.beginAnalyzis();
 			scheduler.makeFromAutoDatabase();	
+		}
+		if(PMDSSettings.getBoolean("LEARNING_MODE", false))
+		{
+			Learner lrn = new Learner(context);
+			lrn.startLearner();
 		}
 		
 	}

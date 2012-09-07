@@ -18,8 +18,8 @@ import android.widget.TimePicker;
 
 public class NewScreenActivity extends Activity
 {
-	Context ctx;
-	ManualSchedulesDBManager db;
+	private Context ctx;
+	private ManualSchedulesDBManager db;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) 
@@ -32,6 +32,14 @@ public class NewScreenActivity extends Activity
 	        
 	        final TimePicker tp = (TimePicker)findViewById(R.id.screenTP);
 	        tp.setIs24HourView(true);
+	        Calendar cal=Calendar.getInstance();
+
+	        int hour=cal.get(Calendar.HOUR_OF_DAY);
+	        int min=cal.get(Calendar.MINUTE);
+	        
+	        tp.setCurrentHour(hour);
+	        tp.setCurrentMinute(min);
+	        
 	        
 	        Button saveScreenBtn = (Button)findViewById(R.id.saveScreenBtn);
 	        saveScreenBtn.setOnClickListener(new OnClickListener() 
@@ -51,9 +59,16 @@ public class NewScreenActivity extends Activity
 	 {
 		 CheckBox screenActiveCB = (CheckBox)findViewById(R.id.screenActiveCB);
 		  
-		 boolean isActive = screenActiveCB.isChecked();
 
-		  
+		 int isActive = -1;
+		 if(screenActiveCB.isChecked())
+		 {
+			 isActive = Constants.ACTIVE_SCHEDULE_MODE;
+		 }
+		 else
+		 {
+			 isActive = Constants.INACTIVE_SCHEDULE_MODE;
+		 }
 		  SeekBar screenBar = (SeekBar)findViewById(R.id.screenBar);
 		  int action = screenBar.getProgress();
 		  
@@ -89,7 +104,7 @@ public class NewScreenActivity extends Activity
 			  if(days[i]==true)
 			  {
 				  long id = db.addScheduleItem(Constants.SCREEN_DEVICE, action, i, hour, minute, null, isActive);
-				  if(isActive) scheduler.scheduleNewItem(id, Constants.SCREEN_DEVICE, action, i, hour, minute);
+				  if(isActive==1) scheduler.scheduleNewItem(Constants.MANUAL_MODE, id, Constants.SCREEN_DEVICE, action, i, hour, minute);
 			  }
 		  }
 	 }

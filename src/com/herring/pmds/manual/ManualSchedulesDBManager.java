@@ -29,7 +29,7 @@ public class ManualSchedulesDBManager
 
 
 	//private Context context;
-    SchedulesDatabaseHelper helper;
+    private SchedulesDatabaseHelper helper;
     
     //public access to database from other classes
     public ManualSchedulesDBManager(Context context)
@@ -88,7 +88,7 @@ public class ManualSchedulesDBManager
 
     
     //add an item to the database
-    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, String timestring, boolean isActive)
+    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, String timestring, int isActive)
     {
     	long id = -1;
     	ContentValues values = new ContentValues();
@@ -138,7 +138,7 @@ public class ManualSchedulesDBManager
     }
     
     //change the activity state of an item
-    public int changeActiveState(int itemID, boolean state)
+    public int changeActiveState(int itemID, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for schedule id: "+itemID);
     	ContentValues values = new ContentValues();
@@ -147,7 +147,7 @@ public class ManualSchedulesDBManager
     }
     
     //change activity state of all items for given device
-    public int changeActiveStateForDeviceSchedules(int deviceType, boolean state)
+    public int changeActiveStateForDeviceSchedules(int deviceType, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for device type: "+deviceType);
     	ContentValues values = new ContentValues();
@@ -156,7 +156,7 @@ public class ManualSchedulesDBManager
     }
     
     //change activity state of all items for given day of the week
-    public int changeActiveStateForDateSchedules(int weekday, boolean state)
+    public int changeActiveStateForDateSchedules(int weekday, int state)
     {
     	Log.i("PMDSManualDBMan", "Changing activity state for day: "+weekday);
     	ContentValues values = new ContentValues();
@@ -209,7 +209,7 @@ public class ManualSchedulesDBManager
     public Cursor getAllActiveSchedules()
     {
     	Cursor cursor = db.query(true, SCHEDULES_TABLE, null,
-    			IS_ACTIVE + "=" +true, null, null, null, null, null);
+    			IS_ACTIVE + "= 1", null, null, null, null, null);
     	if (cursor != null) {
 			cursor.moveToFirst();
 		}

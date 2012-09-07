@@ -26,17 +26,17 @@ public class ADateScheduleActivity extends ExpandableListActivity
 {
 	private AutoSchedulesDBManager db; 
 
-	static Context context;
+	private static Context context;
 
-	ArrayList<ArrayList<ChildItem>> children;
-	ArrayList<GroupItem> groups;
+	private ArrayList<ArrayList<ChildItem>> children;
+	private ArrayList<GroupItem> groups;
 	
 	private static final int DELETE_ITEM = 0;
 	private static final int DEACTIVATE_ALL = 1;
 	private static final int ACTIVATE_ALL = 2;
 	private static final int DELETE_ALL = 3;
 	
-	PMDSExpendableListAdapter adapter;
+	private PMDSExpendableListAdapter adapter;
 
 	
 	
@@ -129,7 +129,7 @@ public class ADateScheduleActivity extends ExpandableListActivity
 			{
 				case DEACTIVATE_ALL:
 					db = new AutoSchedulesDBManager(context);
-					int changeCount1 = db.changeActiveStateForDateSchedules(day, false);
+					int changeCount1 = db.changeActiveStateForDateSchedules(day, Constants.INACTIVE_SCHEDULE_MODE);
 					db.closeDB();
 					Log.i("PMDS", "Changed "+changeCount1+" items");
 					fillData();
@@ -137,7 +137,7 @@ public class ADateScheduleActivity extends ExpandableListActivity
 					break;
 				case ACTIVATE_ALL:
 					db = new AutoSchedulesDBManager(context);
-					int changeCount = db.changeActiveStateForDateSchedules(day, true);
+					int changeCount = db.changeActiveStateForDateSchedules(day, Constants.ACTIVE_SCHEDULE_MODE);
 					db.closeDB();
 					Log.i("PMDS", "Changed "+changeCount+" items");
 					fillData();

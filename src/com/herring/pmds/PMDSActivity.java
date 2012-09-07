@@ -2,15 +2,17 @@ package com.herring.pmds;
 
 import com.herring.pmds.auto.ADateScheduleActivity;
 import com.herring.pmds.auto.ADeviceScheduleActivity;
+import com.herring.pmds.auto.Analyzer;
 import com.herring.pmds.learning.Learner;
 import com.herring.pmds.manual.MDateScheduleActivity;
 import com.herring.pmds.manual.MDeviceScheduleActivity;
-import com.herring.pmds.manual.ManualSchedulesDBManager;
 import com.herring.pmds.manual.NewScheduleItemActivity;
 import com.herring.pmds.tools.Constants;
+import com.herring.pmds.tools.Scheduler;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,20 +35,23 @@ public class PMDSActivity extends Activity
 	 * 
 	 * TODO
 	 * 
-	 * Analyzer - get that knowledge db and analyze it to make schedules
-	 * Switching between schedule modes - how to make them inactive? Cancel alarm manager somehow?
+	 * [X] Analyzer - get that knowledge db and analyze it to make schedules
+	 * [CHECK IF IT WORKS -  sched.cancelAllPendingAlarms();]Switching between schedule modes - how to make them inactive? Cancel alarm manager somehow?
 	 * Find out how to determine whether it's night or not - give option to shut all devices at night
 	 * If enough time - improve manual adding of schedules, namely layouts
 	 * comment all the code
 	 * 
 	 */
  
+	private Context ctx;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);     
+        setContentView(R.layout.main);    
+        ctx = getApplicationContext();
+        final Scheduler sched = new Scheduler(ctx);
         
         //radio buttons
         RadioGroup radioG = (RadioGroup)findViewById(R.id.mainRadioGroup);
@@ -58,10 +63,14 @@ public class PMDSActivity extends Activity
             	if(checkedId == R.id.manualRBtn)
             	{
             		setPreference(false);
+            		 sched.cancelAllPendingAlarms();
+            		sched.makeFromManualDatabase();
             	}
             	else if(checkedId == R.id.autoRBtn)
             	{
             		setPreference(true);
+            		 sched.cancelAllPendingAlarms();
+            		sched.makeFromAutoDatabase();
             	}
 
             }
@@ -75,13 +84,13 @@ public class PMDSActivity extends Activity
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
-            	Learner lrn = new Learner(getApplicationContext());
-                if (isChecked)
+            	Learner lrn = new Learner(ctx);
+                if (isChecked && !checkLearningMode())
                 {
                 	setLearningMode(true);
                 	lrn.startLearner();
                 }
-                else
+                else if(!isChecked && checkLearningMode())
                 {
                 	setLearningMode(false);
                 	lrn.stopLearner();
@@ -143,17 +152,37 @@ public class PMDSActivity extends Activity
 	    	  }
         });
         
+        Button updateDbBtn = (Button)findViewById(R.id.updateDBBtn);
+        updateDbBtn.setOnClickListener(new OnClickListener() 
+        {
+	    	  public void onClick(View v) 
+	    	  {
+	    		  Analyzer analyzer = new Analyzer(ctx);
+	    		  //analyzer.performCleanup();
+	    		  analyzer.beginAnalyzis();
+	    		  Scheduler scheduler = new Scheduler(ctx);
+	    		  
+	    		  SharedPreferences PMDSSettings = getSharedPreferences(Constants.PMDS_PREFS, Context.MODE_PRIVATE);
+	    		  if(PMDSSettings.getBoolean("PMDS_MODE", false)) //only if automatic is turned on
+	    		  {
+	    			  sched.cancelAllPendingAlarms();
+	    		  }
+	    		  
+	    		  scheduler.makeFromAutoDatabase();
+	    	  }
+        });
+        
         //temp dev options
-        Button wipeBtn = (Button)findViewById(R.id.wipeBtn);
+        /*Button wipeBtn = (Button)findViewById(R.id.wipeBtn);
         wipeBtn.setOnClickListener(new OnClickListener() 
         {
 	    	  public void onClick(View v) 
 	    	  {
-	    		  ManualSchedulesDBManager db = new ManualSchedulesDBManager(getApplicationContext());
+	    		  ManualSchedulesDBManager db = new ManualSchedulesDBManager(ctx);
 	    		  db.wipeDB();
 	    		  db.closeDB();
 	    	  }
-        });
+        });*/
 
     }
     
@@ -267,6 +296,7 @@ public class PMDSActivity extends Activity
     	prefEditor.putBoolean("PMDS_MODE", rButton);
 		prefEditor.commit();  
     }
+
     
 
 }

@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 public class BluetoothDevice 
 {
 	//Bluetooth adapter object
-	static BluetoothAdapter bluetoothAdapter;
+	private static BluetoothAdapter bluetoothAdapter;
 	public static void turnOff()
 	{
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();    

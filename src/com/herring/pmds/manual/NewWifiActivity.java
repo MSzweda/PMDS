@@ -23,8 +23,8 @@ import android.widget.TimePicker;
 public class NewWifiActivity extends Activity
 {
 
-	Context ctx;
-	ManualSchedulesDBManager db;
+	private Context ctx;
+	private ManualSchedulesDBManager db;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) 
@@ -37,6 +37,14 @@ public class NewWifiActivity extends Activity
 	        
 	        final TimePicker tp = (TimePicker)findViewById(R.id.wifiTP);
 	        tp.setIs24HourView(true);
+	        
+	        Calendar cal=Calendar.getInstance();
+
+	        int hour=cal.get(Calendar.HOUR_OF_DAY);
+	        int min=cal.get(Calendar.MINUTE);
+	        
+	        tp.setCurrentHour(hour);
+	        tp.setCurrentMinute(min);
 	        
 	        Button saveWifiBtn = (Button)findViewById(R.id.saveWifiBtn);
 	        saveWifiBtn.setOnClickListener(new OnClickListener() 
@@ -56,7 +64,17 @@ public class NewWifiActivity extends Activity
 	 {
 		 CheckBox wifiActiveCB = (CheckBox)findViewById(R.id.wifiActiveCB);
 		  
-		 boolean isActive = wifiActiveCB.isChecked();
+		 
+		 int isActive = -1;
+		 if(wifiActiveCB.isChecked())
+		 {
+			 isActive = Constants.ACTIVE_SCHEDULE_MODE;
+		 }
+		 else
+		 {
+			 isActive = Constants.INACTIVE_SCHEDULE_MODE;
+		 }
+		 
 		  RadioButton wifiOnRB = (RadioButton)findViewById(R.id.wifiOnRB);
 		 
 		  int action = Constants.TURN_OFF_ACTION;
@@ -96,7 +114,7 @@ public class NewWifiActivity extends Activity
 			  if(days[i]==true)
 			  {
 				  long id = db.addScheduleItem(Constants.WIFI_DEVICE, action, i, hour, minute, null, isActive);
-				  if(isActive) scheduler.scheduleNewItem(id, Constants.WIFI_DEVICE, action, i, hour, minute);
+				  if(isActive==1) scheduler.scheduleNewItem(Constants.MANUAL_MODE, id, Constants.WIFI_DEVICE, action, i, hour, minute);
 			  }
 		  }
 	 }

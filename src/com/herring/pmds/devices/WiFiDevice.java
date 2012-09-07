@@ -13,7 +13,7 @@ import android.net.wifi.WifiManager;
 public class WiFiDevice 
 {
 	//WiFiManager object
-	static WifiManager wm;
+	private static WifiManager wm;
 	
 	//call to turn off the wifi device, if it's turned on
 	public static void turnOff(Context ctx)

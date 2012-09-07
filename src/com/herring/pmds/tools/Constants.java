@@ -30,6 +30,7 @@ public class Constants
 	public final static int INACTIVE_SCHEDULE_MODE = 0;
 	public final static int ACTIVE_SCHEDULE_MODE = 1;
 	
+	
 	//modes
 	public static final String ONDEMAND_MODE_STR = "ondemand";
 	public static final String POWERSAVE_MODE_STR = "powersave";
@@ -38,4 +39,7 @@ public class Constants
 	public static final int ONDEMAND_MODE = 0;
 	public static final int POWERSAVE_MODE = 1;
 	public static final int CONSERVATIVE_MODE = 2;
+	
+	public static final int MANUAL_MODE = 0;
+	public static final int AUTO_MODE = 1;
 }

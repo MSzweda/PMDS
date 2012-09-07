@@ -18,6 +18,5 @@ public class DummyActivity extends Activity
         ScreenDevice sd = new ScreenDevice();
 		sd.setScreenBrightness(action, context, this);
 		finish();
- 
     }
 }

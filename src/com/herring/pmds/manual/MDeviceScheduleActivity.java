@@ -31,15 +31,15 @@ public class MDeviceScheduleActivity extends ExpandableListActivity
 
 	static Context context;
 	
-	ArrayList<ArrayList<ChildItem>> children;
-	ArrayList<GroupItem> groups;
+	private ArrayList<ArrayList<ChildItem>> children;
+	private ArrayList<GroupItem> groups;
 	
 	private static final int DELETE_ITEM = 0;
 	private static final int DEACTIVATE_ALL = 1;
 	private static final int ACTIVATE_ALL = 2;
 	private static final int DELETE_ALL = 3;
 	
-	PMDSExpendableListAdapter adapter;
+	private PMDSExpendableListAdapter adapter;
 
 	
 	@Override
@@ -151,7 +151,7 @@ public class MDeviceScheduleActivity extends ExpandableListActivity
 			{
 				case DEACTIVATE_ALL:
 					db = new ManualSchedulesDBManager(context);
-					int changeCount1 = db.changeActiveStateForDeviceSchedules(devType, false);
+					int changeCount1 = db.changeActiveStateForDeviceSchedules(devType, Constants.INACTIVE_SCHEDULE_MODE);
 					db.closeDB();
 					Log.i("PMDS", "Changed "+changeCount1+" items");
 					fillData();
@@ -159,7 +159,7 @@ public class MDeviceScheduleActivity extends ExpandableListActivity
 					break;
 				case ACTIVATE_ALL:
 					db = new ManualSchedulesDBManager(context);
-					int changeCount = db.changeActiveStateForDeviceSchedules(devType, true);
+					int changeCount = db.changeActiveStateForDeviceSchedules(devType, Constants.ACTIVE_SCHEDULE_MODE);
 					db.closeDB();
 					Log.i("PMDS", "Changed "+changeCount+" items");
 					fillData();

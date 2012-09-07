@@ -18,8 +18,8 @@ import android.widget.TimePicker;
 
 public class NewBluetoothActivity extends Activity
 {
-	Context ctx;
-	ManualSchedulesDBManager db;
+	private Context ctx;
+	private ManualSchedulesDBManager db;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) 
@@ -32,6 +32,15 @@ public class NewBluetoothActivity extends Activity
 	        
 	        final TimePicker tp = (TimePicker)findViewById(R.id.btTP);
 	        tp.setIs24HourView(true);
+	        
+	        Calendar cal=Calendar.getInstance();
+
+	        int hour=cal.get(Calendar.HOUR_OF_DAY);
+	        int min=cal.get(Calendar.MINUTE);
+	        
+	        tp.setCurrentHour(hour);
+	        tp.setCurrentMinute(min);
+	        
 	        
 	        Button saveBtBtn = (Button)findViewById(R.id.saveBtBtn);
 	        saveBtBtn.setOnClickListener(new OnClickListener() 
@@ -51,7 +60,16 @@ public class NewBluetoothActivity extends Activity
 	 {
 		 CheckBox btActiveCB = (CheckBox)findViewById(R.id.btActiveCB);
 		  
-		 boolean isActive = btActiveCB.isChecked();
+		 int isActive = -1;
+		 if(btActiveCB.isChecked())
+		 {
+			 isActive = Constants.ACTIVE_SCHEDULE_MODE;
+		 }
+		 else
+		 {
+			 isActive = Constants.INACTIVE_SCHEDULE_MODE;
+		 }
+		 
 		  RadioButton btOnRB = (RadioButton)findViewById(R.id.btOnRB);
 		 
 		  int action = Constants.TURN_OFF_ACTION;
@@ -91,7 +109,7 @@ public class NewBluetoothActivity extends Activity
 			  if(days[i]==true)
 			  {
 				  long id = db.addScheduleItem(Constants.BLUETOOTH_DEVICE, action, i, hour, minute, null, isActive);
-				  if(isActive) scheduler.scheduleNewItem(id, Constants.BLUETOOTH_DEVICE, action, i, hour, minute);
+				  if(isActive==1) scheduler.scheduleNewItem(Constants.MANUAL_MODE, id, Constants.BLUETOOTH_DEVICE, action, i, hour, minute);
 			  }
 		  }
 	 }

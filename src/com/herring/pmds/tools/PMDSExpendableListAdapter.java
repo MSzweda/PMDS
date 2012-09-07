@@ -106,7 +106,14 @@ public class PMDSExpendableListAdapter extends BaseExpandableListAdapter
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
 			{
 				ManualSchedulesDBManager db = new ManualSchedulesDBManager(context);
-				db.changeActiveState(child.id, isChecked);
+				if(isChecked)
+				{
+					db.changeActiveState(child.id, Constants.ACTIVE_SCHEDULE_MODE);
+				}
+				else
+				{
+					db.changeActiveState(child.id, Constants.INACTIVE_SCHEDULE_MODE);
+				}
 				db.closeDB();
 				//Log.i("PMDSExpendableAdapter","Clicked toggle button for id: "+child.id);
 				if(isChecked) child.isActive = 1;

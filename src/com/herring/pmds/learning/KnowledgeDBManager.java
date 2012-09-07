@@ -25,12 +25,12 @@ public class KnowledgeDBManager
     public final static String WEEKDAY = "weekday";			//what day of the week it should be applied on, MONDAY=0, SUNDAY=6
     public final static String HOUR_OF_DAY = "hour";			//HOUR - what time it should be applied at
     public final static String MINUTE_OF_HOUR = "minute";		//MINUTE - what time it should be applied at
-    public final static String IS_ACTIVE = "active";			//1 if element is active, 0 if not
+    //public final static String IS_ACTIVE = "active";			//1 if element is active, 0 if not
     public final static String TIMESTAMP = "time";				//for comparision
     
 
 	//private Context context;
-    SchedulesDatabaseHelper helper;
+    private SchedulesDatabaseHelper helper;
     
     //public access to database from other classes
     public KnowledgeDBManager(Context context)
@@ -70,7 +70,7 @@ public class KnowledgeDBManager
                     WEEKDAY 		+ " integer," +
                     HOUR_OF_DAY 	+ " integer," +
                     MINUTE_OF_HOUR 	+ " integer," +
-                    IS_ACTIVE 		+ " integer," +
+                    //IS_ACTIVE 		+ " integer," +
                     TIMESTAMP 		+ " long" +
                     ");";
             
@@ -89,8 +89,9 @@ public class KnowledgeDBManager
 
     
     //add an item to the database
-    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, boolean isActive, long time)
+    public long addScheduleItem(int deviceType, int actionType, int weekday, int hour, int minute, /*boolean isActive,*/ long time)
     {
+    	Log.i("PMDS KDBManager", "adding item");
     	long id = -1;
     	ContentValues values = new ContentValues();
         values.put(DEVICE_TYPE, deviceType);
@@ -98,21 +99,22 @@ public class KnowledgeDBManager
         values.put(WEEKDAY, weekday);
         values.put(HOUR_OF_DAY, hour);
         values.put(MINUTE_OF_HOUR, minute);
-        values.put(IS_ACTIVE, isActive);
+        //values.put(IS_ACTIVE, isActive);
         values.put(TIMESTAMP, time);
         
         try
         {
             id = db.insert(SCHEDULES_TABLE, null, values);
         }
-        catch(Exception e)	{
+        catch(Exception e)	
+        {
             Log.e("PMDS DB ERROR", e.toString());
             e.printStackTrace();
         }
         
         return id;
     }
-    
+    /*
     //delete an item from the database
     public int deleteScheduleItem(int itemID)
     {
@@ -170,7 +172,7 @@ public class KnowledgeDBManager
 		
 		return cursor.getInt(0);
     }
-    
+    */
     //retrieve all schedules for given device
     public Cursor getAllSchedulesByDevice(int deviceType)
     {
@@ -199,7 +201,7 @@ public class KnowledgeDBManager
 		}
 		return cursor;
     }
-    
+    /*
     //retrieve all active schedules
     public Cursor getAllActiveSchedules()
     {
@@ -210,8 +212,8 @@ public class KnowledgeDBManager
 		}
 		return cursor;
     }
-    
-
+    */
+/*
     public int getClosestWeekday(int weekday)
     {
     	int answer = -1;
@@ -238,7 +240,7 @@ public class KnowledgeDBManager
     	cursor.moveToFirst();
     	return answer;
     }
-    
+    */
     public int wipeDB()
     {
     	Log.i("PMDSManualDBManager", "Database wiped");
@@ -259,7 +261,8 @@ public class KnowledgeDBManager
     {
     	Cursor cursor = db.query(true, SCHEDULES_TABLE, new String[] { WEEKDAY },
     			null, null, null, null, null, null);
-    	if (cursor != null) {
+    	if (cursor != null) 
+    	{
 			cursor.moveToFirst();
 		}
     	return cursor;
@@ -269,10 +272,29 @@ public class KnowledgeDBManager
     {
     	Cursor cursor = db.query(true, SCHEDULES_TABLE, null,
     			DEVICE_TYPE+"="+devType, null, null, null, TIMESTAMP+" DESC", null);
-    	if (cursor != null) {
+    	if (cursor != null) 
+    	{
 			cursor.moveToFirst();
 		}
     	return cursor;
+    }
+    
+    public Cursor getEntriesForDay(int day)
+    {
+    	Cursor cursor = db.query(SCHEDULES_TABLE, null, WEEKDAY+"="+day, null, null, null, HOUR_OF_DAY + ","+MINUTE_OF_HOUR+" ASC");
+    	if (cursor != null) 
+    	{
+			cursor.moveToFirst();
+		}
+    	return cursor;
+    }
+    
+    public int removeEntriesOlderThanMonth()
+    {
+    	return db.delete(SCHEDULES_TABLE, TIMESTAMP +" < date('now', '-30 day')", null);
+    	//String sql = "DELETE FROM " + SCHEDULES_TABLE + "WHERE " +TIMESTAMP+" <= date('now','-30 day')"; 
+    	//db.execSQL(sql);
+
     }
     
 
