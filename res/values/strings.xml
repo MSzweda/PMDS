@@ -20,6 +20,7 @@
     <string name="are_you_sure_delete">Are you sure you want to delete this item?</string>
     <string name="cancel">Cancel</string>
     <string name="learning_mode">Learning mode</string>
+    <string name="update_auto_database">Update database</string>
     
     <string name="options">Options</string>
     <string name="deactivate_all">Deactivate all</string>

@@ -65,6 +65,9 @@ public class PMDSAlarmReceiver extends BroadcastReceiver
 				else if(devType == Constants.SCREEN_DEVICE)
 				{
 					Intent screenActiv = new Intent(context, DummyActivity.class);
+					screenActiv.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					screenActiv.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+					screenActiv.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 					screenActiv.putExtra("action", action);
 		    		context.startActivity(screenActiv);
 				}

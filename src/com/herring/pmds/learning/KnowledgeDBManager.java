@@ -1,5 +1,7 @@
 package com.herring.pmds.learning;
 
+import com.herring.pmds.tools.Constants;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -279,9 +281,29 @@ public class KnowledgeDBManager
     	return cursor;
     }
     
-    public Cursor getEntriesForDay(int day)
+    public Cursor getEntriesForDayONOFF(int day)
     {
-    	Cursor cursor = db.query(SCHEDULES_TABLE, null, WEEKDAY+"="+day, null, null, null, HOUR_OF_DAY + ","+MINUTE_OF_HOUR+" ASC");
+    	Cursor cursor = db.query(SCHEDULES_TABLE, null, WEEKDAY+"="+day+" AND( "+DEVICE_TYPE+"="+Constants.AUTOROTATION+" OR "+DEVICE_TYPE+"="+Constants.BLUETOOTH_DEVICE+" OR "+DEVICE_TYPE+"="+Constants.WIFI_DEVICE+" )", null, null, null, HOUR_OF_DAY + ","+MINUTE_OF_HOUR+" ASC");
+    	if (cursor != null) 
+    	{
+			cursor.moveToFirst();
+		}
+    	return cursor;
+    }
+    
+    public Cursor getEntriesForDayCPU(int day)
+    {
+    	Cursor cursor = db.query(SCHEDULES_TABLE, null, WEEKDAY+"="+day+" AND "+DEVICE_TYPE+"="+Constants.CPU_DEVICE, null, null, null, HOUR_OF_DAY + ","+MINUTE_OF_HOUR+" ASC");
+    	if (cursor != null) 
+    	{
+			cursor.moveToFirst();
+		}
+    	return cursor;
+    }
+    
+    public Cursor getEntriesForDayScreen(int day)
+    {
+    	Cursor cursor = db.query(SCHEDULES_TABLE, null, WEEKDAY+"="+day+" AND "+DEVICE_TYPE+"="+Constants.SCREEN_DEVICE, null, null, null, HOUR_OF_DAY + ","+MINUTE_OF_HOUR+" ASC");
     	if (cursor != null) 
     	{
 			cursor.moveToFirst();

@@ -40,11 +40,25 @@ public class Analyzer
     	{
 			int day = daysCursor.getInt(daysCursor.getColumnIndex(KnowledgeDBManager.WEEKDAY));
 			Log.i("PMDS Analyzer", "Analyzing day "+ day);
-			Cursor data = getEntriesCursor(day);
-			Cursor dataForBayes = getEntriesCursor(day);
-			Log.i("PMDS Analyzer", "Found "+ data.getCount() + " entries");
-			ArrayList<EntryItem> newEntries = createNewEntries(data, day, dataForBayes);
+			
+			Cursor data = getEntriesCursorONOFF(day);
+			Cursor dataForBayes = getEntriesCursorONOFF(day);
+			Log.i("PMDS Analyzer", "Found "+ data.getCount() + " ONOFF entries");
+			ArrayList<EntryItem> newEntries = createNewEntriesONOFF(data, day, dataForBayes);
 			removeUselessData(newEntries);
+			
+			Cursor data2 = getEntriesCursorCPU(day);
+			Cursor dataForBayes2 = getEntriesCursorCPU(day);
+			Log.i("PMDS Analyzer", "Found "+ data2.getCount() + " CPU entries");
+			ArrayList<EntryItem> newEntries2 = createNewEntriesCPU(data2, day, dataForBayes2);
+			removeUselessData(newEntries2);
+			
+			Cursor data3 = getEntriesCursorScreen(day);
+			Cursor dataForBayes3 = getEntriesCursorScreen(day);
+			Log.i("PMDS Analyzer", "Found "+ data3.getCount() + " Screen entries");
+			ArrayList<EntryItem> newEntries3 = createNewEntriesScreen(data3, day, dataForBayes3);
+			removeUselessData(newEntries3);
+			
 			daysCursor.moveToNext();
     	}
 		Log.i("PMDS Analyzer", "Finished analyzis");
@@ -58,15 +72,31 @@ public class Analyzer
 		Log.i("PMDS Analyzer", "Cleanup performed, deleted "+deletedCount+" entries");
 	}
 	
-	private Cursor getEntriesCursor(int day)
+	private Cursor getEntriesCursorONOFF(int day)
 	{
 		kdb = new KnowledgeDBManager(ctx);
-		Cursor data = kdb.getEntriesForDay(day);
+		Cursor data = kdb.getEntriesForDayONOFF(day);
 		kdb.closeDB();
 		return data;
 	}
 	
-	private ArrayList<EntryItem> createNewEntries(Cursor data, int day, Cursor dataForBayes)
+	private Cursor getEntriesCursorCPU(int day)
+	{
+		kdb = new KnowledgeDBManager(ctx);
+		Cursor data = kdb.getEntriesForDayCPU(day);
+		kdb.closeDB();
+		return data;
+	}
+	
+	private Cursor getEntriesCursorScreen(int day)
+	{
+		kdb = new KnowledgeDBManager(ctx);
+		Cursor data = kdb.getEntriesForDayScreen(day);
+		kdb.closeDB();
+		return data;
+	}
+	
+	private ArrayList<EntryItem> createNewEntriesONOFF(Cursor data, int day, Cursor dataForBayes)
 	{
 		ArrayList<EntryItem> entries = new ArrayList<EntryItem>();
 		
@@ -88,7 +118,61 @@ public class Analyzer
 
 			data.moveToNext();
 		}
-		Log.i("PMDS Analyzer", "Created "+entries.size()+" entries for day "+day);
+		Log.i("PMDS Analyzer", "Created "+entries.size()+" ON/OFF entries for day "+day);
+		return entries;
+	}
+	
+	private ArrayList<EntryItem> createNewEntriesCPU(Cursor data, int day, Cursor dataForBayes)
+	{
+		ArrayList<EntryItem> entries = new ArrayList<EntryItem>();
+		
+		Log.i("PMDS","entries: "+data.getCount());
+		BayesClassifier bc = new BayesClassifier(dataForBayes, Constants.CPU_DEVICE);
+		
+		int deviceColumn = data.getColumnIndex(KnowledgeDBManager.DEVICE_TYPE);
+		int hourColumn = data.getColumnIndex(KnowledgeDBManager.HOUR_OF_DAY);
+		int minuteColumn = data.getColumnIndex(KnowledgeDBManager.MINUTE_OF_HOUR);
+		
+		data.moveToFirst();
+		while(!data.isAfterLast())
+		{
+			int device = data.getInt(deviceColumn);
+			int hour = data.getInt(hourColumn);
+			int minute = data.getInt(minuteColumn);
+			int decidedAction = bc.makeDecision_CPU(hour, minute);
+			entries.add(new EntryItem(device, decidedAction, day, hour, minute));
+
+			data.moveToNext();
+		}
+		Log.i("PMDS Analyzer", "Created "+entries.size()+" CPU entries for day "+day);
+		return entries;
+	}
+	
+	private ArrayList<EntryItem> createNewEntriesScreen(Cursor data, int day, Cursor dataForBayes)
+	{
+		ArrayList<EntryItem> entries = new ArrayList<EntryItem>();
+		
+		Log.i("PMDS","entries: "+data.getCount());
+		BayesClassifier bc = new BayesClassifier(dataForBayes, Constants.SCREEN_DEVICE);
+		
+		int deviceColumn = data.getColumnIndex(KnowledgeDBManager.DEVICE_TYPE);
+		int hourColumn = data.getColumnIndex(KnowledgeDBManager.HOUR_OF_DAY);
+		int minuteColumn = data.getColumnIndex(KnowledgeDBManager.MINUTE_OF_HOUR);
+		int actionColumn = data.getColumnIndex(KnowledgeDBManager.ACTION_TYPE);
+		
+		data.moveToFirst();
+		while(!data.isAfterLast())
+		{
+			int device = data.getInt(deviceColumn);
+			int hour = data.getInt(hourColumn);
+			int minute = data.getInt(minuteColumn);
+			int act = data.getInt(actionColumn);
+			int decidedAction = bc.makeDecision_Screen(hour, minute, act);
+			entries.add(new EntryItem(device, decidedAction, day, hour, minute));
+
+			data.moveToNext();
+		}
+		Log.i("PMDS Analyzer", "Created "+entries.size()+" Screen entries for day "+day);
 		return entries;
 	}
 	

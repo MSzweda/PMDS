@@ -60,6 +60,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/learning_mode" />
+
+    <Button
+        android:id="@+id/updateDBBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/update_auto_database" />
 
     <TextView
         android:id="@+id/textView1"

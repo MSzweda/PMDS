@@ -184,6 +184,7 @@ public class Scheduler
 		Intent intent = new Intent(ctx, PMDSAlarmReceiver.class);
 		//set uri as data, so it can be filtered by the "pmds*alarm:" schema
 		intent.setData(Uri.parse(uri));
+
 		
 		//get the object with correct time
 		Calendar cal = getScheduleTime(weekday, hour, minute);
